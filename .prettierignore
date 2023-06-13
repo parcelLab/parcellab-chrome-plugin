@@ -5,3 +5,5 @@ CODEOWNERS
 Containerfile
 *.prisma
 renovate.json
+dist
+node_modules

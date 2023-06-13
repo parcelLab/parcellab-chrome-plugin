@@ -1,4 +1,4 @@
-# Project's Title
+# parcelLab Chrome Extension
 
 <!---
 This is the name of the project. It describes the whole project in one sentence, and helps people understand what the main goal and aim of the project is.
@@ -7,13 +7,10 @@ Consider putting a CI badge too, for instance:
  [![myworkflow](https://github.com/parcellab/repo-template-base/workflows/myworkflow/badge.svg)](https://github.com/parcellab/repo-template-base/actions?workflow=myworkflow)
 -->
 
-## Table of Contents (Optional)
-
-<!---
-If your README is very long, you might want to add a table of contents to make it easy for users to navigate to different sections easily. It will make it easier for readers to move around the project with ease.
--->
-
 ## About The Project
+A Chrome popup/sidepanel extension to check order status via parcelLab API. This app is written in TypeScript and leverages Bootstrap and jQuery.
+
+![Alt text](SCR-20230607-qyf.png)
 
 <!---
 This is an important component of your project that many new developers often overlook.
@@ -27,6 +24,20 @@ The quality of a README description often differentiates a good project from a b
 -->
 
 ## Installation
+
+### Manual Installation
+- Clone this repo
+```bash  
+$ npm install
+$ npm run build
+```
+- Navigate to chrome://extensions/ and check the box for "Developer mode" in the top right.
+- Press the "Load unpacked" button on the top left of the screen
+- Navigate to and select the dist directory where you've cloned this repo to
+
+### Install from Chrome
+- Navigate to [tbd]
+- Click "Add to Chrome"
 
 <!---If you are working on a project that a user needs to install or run locally in a machine,
 you should include the steps required to install your project and also the required dependencies if any.*
@@ -42,6 +53,10 @@ pip install foobar
 -->
 
 ## Usage
+
+- From the options page enter your parcelLab account id, api token and select your language
+- Open the extension from the extension bar or in the sidepanel
+- Search for information by order number or tracking number
 
 <!---
 Provide instructions and examples so users/contributors can use the project. This will make it easy for them in case they encounter a problem – they will always have a place to reference what is expected.*
