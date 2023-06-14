@@ -21,7 +21,11 @@ export function getOrderByOrderNumber(searchTerm, options) {
       // StorageService.saveLastResult() //- bring me back
     })
     .fail(function (response) {
-      if ((response.status == 403)) {
+      if (response.status == 401) {
+        stopProgress()
+				displayAlert(401)
+				$('#search-btn').prop('disabled', false);
+      } else if (response.status == 403) {
         stopProgress()
         displayAlert(403)
         $('#search-btn').prop('disabled', false)

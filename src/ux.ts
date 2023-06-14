@@ -249,19 +249,23 @@ export function displayAlert(status) {
   let alertType
 
   switch (status) {
-    case 400:
-      message = 'Please enter an order number and try again'
-      alertType = 'warning'
-      break
-    case 403:
-      message = 'Please check your authorization credentials and try again'
-      alertType = 'danger'
-      break
-    case 404:
-      message = 'No records found'
-      alertType = 'info'
-      break
-  }
+		case 400:
+			message = 'Please enter an order number and try again';
+			alertType = 'warning';
+			break;
+		case 401:
+			message = 'Please check your authorization credentials and try again';
+			alertType = 'danger';
+			break;
+		case 403:
+			message = 'Please check your authorization credentials and try again';
+			alertType = 'danger';
+			break;
+		case 404:
+			message = 'No records found';
+			alertType = 'info';
+			break;
+	}
   $('#search-area').after(
     `<div id="fail-alert" class="alert alert-${alertType}" role="alert">${message}</div>`
   )

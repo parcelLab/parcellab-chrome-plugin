@@ -1,7 +1,7 @@
 {
-  "name": "startingfromscratch",
-  "version": "1.0.0",
-  "description": "",
+  "name": "parcellab-chrome-extension",
+  "version": "0.5.2",
+  "description": "parcelLab Chrome plugin for Customer Service teams to retrieve and display trackings from parcelLab",
   "scripts": {
     "start": "webpack --watch --progress --config webpack.dev.cjs",
     "build": "webpack --progress --config webpack.prod.cjs",
