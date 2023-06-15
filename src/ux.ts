@@ -101,31 +101,31 @@ export function addOrderInformation(orderNo, parcelsCount) {
   )
 }
 
-export function addTrackingCard(parcel, i, parcelsCount) {
+export function addTrackingCard(parcel, i, packageText, displayIndex, displayCount) {
   $('#parcels').append(
-    `
+		`
     <div class="container bg-light border border-light-subtle rounded-top-3 small">
-        <div class="row mt-2">
-            <div class="col">
-                ${parcel.tracking_number}
+        <div class="mt-2 d-flex">
+            <div class="flex-fill">
+                ${parcel.courier.prettyname} ${parcel.tracking_number}
             </div>
-            <div class="col text-end">
+            <div class="flex-fill text-end">
                 <a data-bs-toggle="collapse" href="#parcel-${i}" role="button" aria-expanded="false" aria-controls="parcel-${i}"><i class="bi toggle-control bi-chevron-compact-down tracking-details"></i></a>
             </div>
         </div>
         <div class="row">
             <div class="col">
-                Package ${i}/${parcelsCount}
+                ${packageText} ${displayIndex}/${displayCount}
             </div>
         </div>
         <div class="row mt-2 mb-2">
             <div class="col">
-                <span class="badge text-bg-light text-wrap" style="background-color: ${parcel.actionBox.color} !important;">${parcel.actionBox.label}</span>
+                <span class="badge text-bg-light text-wrap" style="background-color: ${parcel.actionBox.color} !important;">${parcel.actionBox.servicePluginLabel}</span>
             </div>
         </div>
     </div>
-  `
-  )
+  `,
+	);
 }
 
 export function addSubCards(parcel, i) {

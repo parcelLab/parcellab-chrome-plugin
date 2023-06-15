@@ -5,6 +5,12 @@ export function mergeAndSortAscendingDate(arrA, arrB) {
   )
 }
 
+export function sortByColorPriority(arr) {
+	return arr.sort(
+		(a, b) => a.actionBox.colorPriority - b.actionBox.colorPriority,
+	);
+}
+
 export function filterHiddenEvents(arr) {
   return arr.filter(function (obj) {
     //if (obj.hasOwnProperty('type')) {
