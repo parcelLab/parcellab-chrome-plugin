@@ -7,10 +7,11 @@ import '../styles/common.scss'
 import { getOptions, StorageOptions, getLastResult, setLastResult } from './storage'
 import * as UX from './ux'
 import {
-  isEmail,
-  mergeAndSortAscendingDate,
-  filterHiddenEvents,
-} from './utility'
+	isEmail,
+	mergeAndSortAscendingDate,
+	filterHiddenEvents,
+	sortByColorPriority,
+} from './utility';
 import { getOrderByOrderNumber, getNotifications } from './api'
 
 require('bootstrap-icons/font/bootstrap-icons.css')
@@ -21,16 +22,37 @@ export function processBotOrder(response) {
   UX.stopProgress()
 
   const parcelsCount = response.orders[0].parcels.length
+  const outboundCount = response.orders[0].parcels.filter(p => p.isReturn === false).length
+  const returnCount = response.orders[0].parcels.filter(p => p.isReturn === true).length
 
   //initial order information
   UX.addOrderInformation(response.orders[0].orderNo, parcelsCount)
 
   let i = 0
-  for (const parcel of response.orders[0].parcels) {
+  let oIndex = 0;
+  let rIndex = 0;
+  let displayIndex = 0
+  let displayCount = 0
+  let packageText
+
+  const parcels = sortByColorPriority(response.orders[0].parcels)
+
+  for (const parcel of parcels) {
     i++
+    if (parcel.isReturn === true) {
+      rIndex++
+      displayIndex = rIndex
+      displayCount = returnCount
+      packageText = 'Return package'
+    } else {
+      oIndex++
+      displayIndex = oIndex;
+      displayCount = outboundCount
+      packageText = 'Package'
+    }
 
     // add tracking card
-    UX.addTrackingCard(parcel, i, parcelsCount)
+    UX.addTrackingCard(parcel, i, packageText, displayIndex, displayCount);
 
     //add subsections
     UX.addSubCards(parcel, i)
