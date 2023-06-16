@@ -101,31 +101,32 @@ export function addOrderInformation(orderNo, parcelsCount) {
   )
 }
 
-export function addTrackingCard(parcel, i, packageText, displayIndex, displayCount) {
-  $('#parcels').append(
+export function addTrackingCard(parcel, i, packageText, displayIndex, displayCount,) {
+	$('#parcels').append(
 		`
     <div class="container bg-light border border-light-subtle rounded-top-3 small">
-        <div class="mt-2 d-flex">
-            <div class="flex-fill">
-                ${parcel.courier.prettyname} ${parcel.tracking_number}
-            </div>
-            <div class="flex-fill text-end">
-                <a data-bs-toggle="collapse" href="#parcel-${i}" role="button" aria-expanded="false" aria-controls="parcel-${i}"><i class="bi toggle-control bi-chevron-compact-down tracking-details"></i></a>
-            </div>
+      <div class="d-flex gap-3 pt-1">
+        <div class="flex-grow-1">
+          <span class="badge" style="color: ${parcel.courier.destination_courier.colorScheme.primary}; background-color: ${parcel.courier.destination_courier.colorScheme.secondary};">${parcel.courier.prettyname}</span> ${parcel.tracking_number}
         </div>
-        <div class="row">
-            <div class="col">
-                ${packageText} ${displayIndex}/${displayCount}
-            </div>
+        <div class="flex-shrink-1">
+          <a class=""data-bs-toggle="collapse" href="#parcel-${i}" role="button" aria-expanded="false" aria-controls="parcel-${i}"><i class="bi toggle-control bi-chevron-compact-down tracking-details"></i></a>
         </div>
-        <div class="row mt-2 mb-2">
-            <div class="col">
-                <span class="badge text-bg-light text-wrap" style="background-color: ${parcel.actionBox.color} !important;">${parcel.actionBox.servicePluginLabel}</span>
-            </div>
-        </div>
+      </div>
+      
+      <div class="row">
+          <div class="col">
+              ${packageText} ${displayIndex}/${displayCount}
+          </div>
+      </div>
+      <div class="row mt-2 mb-2">
+          <div class="col">
+              <span class="badge text-bg-light text-wrap" style="background-color: ${parcel.actionBox.color} !important;">${parcel.actionBox.servicePluginLabel}</span>
+          </div>
+      </div>
     </div>
-  `,
-	);
+  `
+	)
 }
 
 export function addSubCards(parcel, i) {

@@ -1,6 +1,6 @@
 {
   "name": "parcellab-chrome-extension",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "parcelLab Chrome plugin for Customer Service teams to retrieve and display trackings from parcelLab",
   "scripts": {
     "start": "webpack --watch --progress --config webpack.dev.cjs",
