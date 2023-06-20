@@ -12,12 +12,12 @@
     <title>parcelLab Order Tracking</title>
   </head>
   <body>
-    <div class="container">
+    <div id="orderCarousel" class="container carousel slide">
         <div class="input-group mb-3 mt-3" id="search-area">
-          <input type="text" id="search-input" class="form-control" placeholder="Order #, tracking #" aria-label="Order Number" aria-describedby="button-addon2">
+          <input type="text" id="search-input" class="form-control" placeholder="Order #, tracking #, email" aria-label="Order Number" aria-describedby="button-addon2">
           <button class="btn btn-outline-primary" type="submit" id="search-btn"><i class="bi-search" style="font-size: 1rem; color: cornflowerblue;"></i></button>
         </div>
-      <div id="resultsPanel"></div>
+      <div id="resultsPanel" class="carousel-inner"></div>
     </div>
     
     <script type="module" src="popup.js"></script>
