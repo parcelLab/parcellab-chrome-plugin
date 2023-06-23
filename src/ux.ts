@@ -77,12 +77,12 @@ export function addOrderHeader(orders, multiOrder: boolean) {
 		htmlString =
 			htmlString +
 			`
-        <div class="container small" id="order-info">
+        <div class="container" id="order-info">
             <div class="row">
-                <div class="col-5">
+                <div class="col-5 order-header">
                     ORDER NUMBER:
                 </div>
-                <div class="col">
+                <div class="col order-header">
                     ${orderNo}
                 </div>
                 <div class="col-2">
@@ -90,7 +90,17 @@ export function addOrderHeader(orders, multiOrder: boolean) {
                 </div>
             </div>
             <div class="row">
-                <div class="col" >
+                <div class="col-5 order-header">
+                    RECIPIENT ADDRESS:
+                </div>
+                <div class="col order-header">
+                    ${orders[0].parcels[0].delivery_info.recipient}<br />
+                    ${orders[0].parcels[0].delivery_info.street}<br />
+                    ${orders[0].parcels[0].delivery_info.city} ${orders[0].parcels[0].delivery_info.zip_code}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col order-header" >
                     PACKAGES (${parcelsCount})
                 </div>
             </div>
@@ -203,8 +213,6 @@ export function addMultiOrderTracking(parcel, orderNo) {
 	);
 }
 
-
-
 export function addTrackingCard(parcel, orderNo, i, packageText, displayIndex, displayCount,) {
 	$('#parcels-for-' + orderNo).append(
 		`
@@ -238,10 +246,12 @@ export function addSubCards(parcel, orderNo, i) {
 		`
     <div class="collapse" data-bs-target="order-${orderNo}-parcel-${parcel.tracking_number}" id="order-${orderNo}-parcel-${parcel.tracking_number}">
 
-        <div id="sd-order-${orderNo}-parcel-${parcel.tracking_number}" class="container border border-light-subtle small shipment-details-${i}" >
+        <div class="container border border-light-subtle shipment-details-${i}" >
             <div class="mt-2 mb-2">
                 <i class="bi bi-box-seam-fill"></i> Shipment details
             </div>
+            <ul id="sd-order-${orderNo}-parcel-${parcel.tracking_number}" class="p-0 main-item">
+            </ul>
         </div>
 
         <div id="pd-order-${orderNo}-parcel-${parcel.tracking_number}" class="container border border-light-subtle small product-details-${i}" >
@@ -311,36 +321,47 @@ export function addProductDetails(articles, orderNo, trackingNumber) {
 export function addCheckpointDetails(
 	orderNo,
 	trackingNumber,
-  date,
+	date,
 	icon,
 	title,
 	subtitle,
 	_cp,
+	lineCode,
+	svgClass,
+	emailClass,
+  infoHtml
 ) {
-
-  $('#sd-order-' + orderNo + '-parcel-' + trackingNumber).append(
+	$('#sd-order-' + orderNo + '-parcel-' + trackingNumber).append(
 		//$('.shipment-details-' + i).append(
 		`
-      <div class="row mb-1">
-        <div class="col-3" style="font-size: 10px !important;">
-              <strong>${date.toLocaleString('en-US', {
-								month: 'long',
-								day: 'numeric',
-							})}</strong><br />
-            ${date.toLocaleString('en-US', {
-							hour: 'numeric',
-							minute: 'numeric',
-							hour12: true,
-						})}
+      <li class="item-1 d-flex position-relative">
+        ${lineCode}
+        <div class="rounded-box">
+          <span class="icon-svg position-relative${svgClass}">
+            ${icon}
+          </span>     
         </div>
-        <div class="col-2" style="font-size: 10px !important;">
-            <i class="bi ${icon}"></i>
+        <div class="d-flex ms-3 justify-content-between w-100 position-relative${emailClass}">
+          <div class="flex-col text-max-w">
+            <p class="mb-0 text-max-w text-decoration-none fw-semibold">${title}</p>
+            <p class="mb-0 text-max-w fw-light small">${subtitle}</p>
+            ${infoHtml}
+          </div>
+          <div class="date">
+            <p class="mb-0">${date.toLocaleString('en-US', {
+							month: 'long',
+							day: 'numeric',
+						})}<br><span class="time fw-light small">${date.toLocaleString(
+			'en-US',
+			{
+				hour: 'numeric',
+				minute: 'numeric',
+				hour12: true,
+			},
+		)}</span></p>
+          </div>
         </div>
-        <div class="col-7" style="font-size: 10px !important;">
-            <strong>${title}</strong><br />
-            ${subtitle}
-        </div>
-      </div>
+      </li>
     `,
 	);
 
@@ -383,6 +404,7 @@ export function displayAlert(status) {
 			alertType = 'info';
 			break;
 	}
+  stopProgress()
   $('#search-area').after(
     `<div id="fail-alert" class="alert alert-${alertType}" role="alert">${message}</div>`
   )
