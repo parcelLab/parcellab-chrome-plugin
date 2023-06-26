@@ -36,7 +36,7 @@ $ npm run build
 - Navigate to and select the dist directory where you've cloned this repo to
 
 ### Install from Chrome
-- Navigate to [tbd]
+- Navigate to [parcelLab Chrome Extension](https://chrome.google.com/webstore/detail/parcellab/gfmodbnpbehnkaohbccplfkcofpecjlj)
 - Click "Add to Chrome"
 
 <!---If you are working on a project that a user needs to install or run locally in a machine,
