@@ -10,7 +10,8 @@ Consider putting a CI badge too, for instance:
 ## About The Project
 A Chrome popup/sidepanel extension to check order status via parcelLab API. This app is written in TypeScript and leverages Bootstrap and jQuery.
 
-![Alt text]
+![image](https://github.com/parcelLab/parcellab-chrome-plugin/assets/1038621/d8166ff1-b03b-45d3-9084-5f4e48d40c43)
+
 
 <!---
 This is an important component of your project that many new developers often overlook.
