@@ -1,46 +1,57 @@
-import * as bootstrap from 'bootstrap'
+//require('@popperjs/core')
+
+import { Collapse, Popover } from 'bootstrap'
+
 import { clearLastResult, setLastResult } from './storage'
 
+
+const myDefaultAllowList = Popover.Default.allowList
+myDefaultAllowList.table = ['class', 'style']
+myDefaultAllowList.tbody = []
+myDefaultAllowList.tr = []
+myDefaultAllowList.td = ['style']
+
+
 export function readyPanel(options, lastResult) {
-  $('#search-input').on('keypress', function (e) {
-    if (e.which == 13) {
-      $('#search-btn').click()
-    }
-  })
+	$('#search-input').on('keypress', function (e) {
+		if (e.which == 13) {
+			$('#search-btn').click()
+		}
+	})
 
-  if (
-    options.user == null ||
-    options.token == null ||
-    options.language == null
-  ) {
-    $('#search-btn').prop('disabled', true)
-    $('#order-input').prop('disabled', true)
+	if (
+		options.user == null ||
+		options.token == null ||
+		options.language == null
+	) {
+		$('#search-btn').prop('disabled', true)
+		$('#order-input').prop('disabled', true)
 
-    chrome.runtime.openOptionsPage()
-  }
+		chrome.runtime.openOptionsPage()
+	}
 
-  if (lastResult !== null) {
-    $('#resultsPanel').html(lastResult)
-    enableControls()
-  }
+	if (lastResult !== null) {
+		$('#resultsPanel').html(lastResult)
+		enableControls()
+	}
 }
 
 export function cleanPanel() {
-  $('#order-info').remove()
-  $('#parcels').remove()
-  $('#fail-alert').remove()
-  $('.divider').remove()
+	$('#order-info').remove()
+	$('#parcels').remove()
+	$('#fail-alert').remove()
+	$('.divider').remove()
 }
 
 export function startProgress() {
-  $('#search-area').after(
-    '<div class="d-flex justify-content-center" id="progress"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span><br /></div><br /></div>'
-  )
-  $('#search-btn').prop('disabled', true)
+	$('#search-area').after(
+		'<div class="d-flex justify-content-center" id="progress"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span><br /></div><br /></div>',
+	)
+	$('#search-btn').prop('disabled', true)
 }
 
 export function stopProgress() {
-  $('#progress').remove()
+	$('#progress').remove()
 }
 
 export function addOrderHeader(orders, multiOrder: boolean) {
@@ -59,9 +70,9 @@ export function addOrderHeader(orders, multiOrder: boolean) {
           <hr class="bg-secondary border-2 border-top border-secondary divider">
         </div>
       `,
-		);
+		)
 	} else {
-		let htmlString = ``;
+		let htmlString = ``
 		if (multiOrder) {
 			htmlString =
 				htmlString +
@@ -69,11 +80,11 @@ export function addOrderHeader(orders, multiOrder: boolean) {
         <div class="border-top border-bottom small bg-info-subtle mb-3">
             <a role="button" data-bs-target="#orderCarousel" data-bs-slide-to="0"><i class="bi bi-chevron-double-left multiorder-control"></i></a> Back to all orders
         </div>
-      `;
+      `
 		}
 
-		const orderNo = orders[0].orderNo;
-		const parcelsCount = orders[0].parcels.length;
+		const orderNo = orders[0].orderNo
+		const parcelsCount = orders[0].parcels.length
 		htmlString =
 			htmlString +
 			`
@@ -107,9 +118,9 @@ export function addOrderHeader(orders, multiOrder: boolean) {
         </div>
         <hr class="bg-secondary border-2 border-top border-secondary divider">
         <div class="container" id="parcels-for-${orderNo}"></div>
-      `;
+      `
 		if (multiOrder) {
-      $('#orderPanel-' + orderNo).html(htmlString);
+			$('#orderPanel-' + orderNo).html(htmlString)
 		} else {
 			$('#resultsPanel').html(htmlString)
 		}
@@ -118,43 +129,66 @@ export function addOrderHeader(orders, multiOrder: boolean) {
 
 export function enableControls() {
 
-  $('.toggle-control').on('click', function () {
-    $(this).toggleClass('bi-chevron-compact-down bi-chevron-compact-up')
-    setLastResult($('#resultsPanel').html())
-  })
+  // open/close collapsible containers
+	$('.toggle-control').on('click', function () {
+		$(this).toggleClass('bi-chevron-compact-down bi-chevron-compact-up')
+		setLastResult($('#resultsPanel').html())
+	})
 
-  $('.multiorder-control').on('click', function () {
-		setLastResult($('#resultsPanel').html());
-	});
+	$('.multiorder-control').on('click', function () {
+		setLastResult($('#resultsPanel').html())
+	})
 
+	$('.closePanel').on('click', function () {
+		$('#resultsPanel').html('')
+		clearLastResult()
+	})
 
-  $('.closePanel').on('click', function () {
-    $('#resultsPanel').html('')
-    clearLastResult()
-  })
+  // get all collapse containers and loop through
+	const collapseElementList = [].slice.call(
+		document.querySelectorAll('.collapse'),
+	)
+	const _collapseList = collapseElementList.map(function (collapseEl) {
+		// enable popovers when opening a container
+    collapseEl.addEventListener('shown.bs.collapse', () => {
+			const tn = collapseEl.getAttribute('data-pl-tracking')
+      enablePopovers(tn)	
+		})
 
-  const collapseElementList = [].slice.call(
-    document.querySelectorAll('.collapse')
-  )
-  const _collapseList = collapseElementList.map(function (collapseEl) {
-    return new bootstrap.Collapse(collapseEl, {
-      toggle: false,
-    })
-  })
+		return new Collapse(collapseEl, {
+			toggle: false,
+		})
+	})
 
-  // const tooltipElementList = [].slice.call(
-  //   document.querySelectorAll('.pl-tt')
-  // )
-  // console.log(tooltipElementList)
-  // const _tooltipList = tooltipElementList.map(function (tooltipEl) {
-  //   const _tooltip = new bootstrap.Tooltip(tooltipEl)
-  // })  
+  //Enable popovers when re-loading previous state
+  const shownElementList = [].slice.call(
+		document.querySelectorAll('.collapsing'),
+	)
+  const _shownList = shownElementList.map(function (shownEl) {
+			try {
+        const tn = shownEl.getAttribute('data-pl-tracking')
+			  enablePopovers(tn)
+      } catch { console.log } 
+	})
+
+}
+
+function enablePopovers(trackingNumber) { 
+  const popoverTriggerList = document.querySelectorAll(`.po-${trackingNumber}`)
+	const _popoverList = [...popoverTriggerList].map(
+		(popoverTriggerEl) => {
+      const aPopover = new Popover(popoverTriggerEl)
+      const trackingToggle = document.getElementById(`toggle-${trackingNumber}`)
+      //console.log(trackingToggle)
+      trackingToggle.addEventListener('click', function () {
+				aPopover.hide()
+			})
+    },
+	)
 }
 
 export function addOrderCard(order, i) {
-
-
-  $('#order-info').append(
+	$('#order-info').append(
 		`
       <div id="${order.orderNo}">
         <div class="d-flex gap-3 pt-1" id="${order.orderNo}">
@@ -169,14 +203,14 @@ export function addOrderCard(order, i) {
         <hr>
       </div>
     `,
-	);
+	)
 }
 
 export function addMultiOrderTracking(parcel, orderNo) {
-  const lastCP = parcel.checkpoints.length - 1
-  const date = new Date(parcel.checkpoints[lastCP].timestamp);
+	const lastCP = parcel.checkpoints.length - 1
+	const date = new Date(parcel.checkpoints[lastCP].timestamp)
 
-  $('#' + orderNo).append(
+	$('#' + orderNo).append(
 		`
       <div class="container bg-light border border-light-subtle rounded small mt-2">
         <div class="d-flex gap-3 pt-2">
@@ -205,15 +239,22 @@ export function addMultiOrderTracking(parcel, orderNo) {
     `,
 	)
 
-  $('#order-info').after(
+	$('#order-info').after(
 		`
      <div class="carousel-item" id="orderPanel-${orderNo}">
      </div>
     `,
-	);
+	)
 }
 
-export function addTrackingCard(parcel, orderNo, i, packageText, displayIndex, displayCount,) {
+export function addTrackingCard(
+	parcel,
+	orderNo,
+	i,
+	packageText,
+	displayIndex,
+	displayCount,
+) {
 	$('#parcels-for-' + orderNo).append(
 		`
     <div class="container bg-light border border-light-subtle rounded-top-3 small">
@@ -222,7 +263,7 @@ export function addTrackingCard(parcel, orderNo, i, packageText, displayIndex, d
           <span class="badge" style="color: ${parcel.courier.destination_courier.colorScheme.primary}; background-color: ${parcel.courier.destination_courier.colorScheme.secondary};">${parcel.courier.prettyname}</span> ${parcel.tracking_number}
         </div>
         <div class="flex-shrink-1">
-          <a data-bs-toggle="collapse" href="#order-${orderNo}-parcel-${parcel.tracking_number}" role="button" aria-expanded="false" aria-controls="order-${orderNo}-parcel-${parcel.tracking_number}"><i class="bi toggle-control bi-chevron-compact-down tracking-details"></i></a>
+          <a data-bs-toggle="collapse" href="#order-${orderNo}-parcel-${parcel.tracking_number}" role="button" aria-expanded="false" aria-controls="order-${orderNo}-parcel-${parcel.tracking_number}"><i id="toggle-${parcel.tracking_number}" class="bi toggle-control bi-chevron-compact-down tracking-details"></i></a>
         </div>
       </div>
       
@@ -238,13 +279,13 @@ export function addTrackingCard(parcel, orderNo, i, packageText, displayIndex, d
       </div>
     </div>
   `,
-	);
+	)
 }
 
 export function addSubCards(parcel, orderNo, i) {
 	$('#parcels-for-' + orderNo).append(
 		`
-    <div class="collapse" data-bs-target="order-${orderNo}-parcel-${parcel.tracking_number}" id="order-${orderNo}-parcel-${parcel.tracking_number}">
+    <div class="collapse" data-pl-tracking="${parcel.tracking_number}" data-bs-target="order-${orderNo}-parcel-${parcel.tracking_number}" id="order-${orderNo}-parcel-${parcel.tracking_number}">
 
         <div class="container border border-light-subtle shipment-details-${i}" >
             <div class="mt-2 mb-2">
@@ -277,12 +318,12 @@ export function addSubCards(parcel, orderNo, i) {
     </div>
     <br />
   `,
-	);
+	)
 }
 
 export function addProductDetailsHeader(trackingNumber, orderNo) {
-  $('#pd-order-' + orderNo + '-parcel-' + trackingNumber).append(
-	//$('.product-details-' + i).append(
+	$('#pd-order-' + orderNo + '-parcel-' + trackingNumber).append(
+		//$('.product-details-' + i).append(
 		`
       <div class="collapse" id="products-order-${orderNo}-parcel-${trackingNumber}">
           <div class="container" id="product-list-order-${orderNo}-parcel-${trackingNumber}">
@@ -297,14 +338,14 @@ export function addProductDetailsHeader(trackingNumber, orderNo) {
           </div>
       </div> 
     `,
-	);
+	)
 }
 
 export function addProductDetails(articles, orderNo, trackingNumber) {
-  for (const article of articles) {
-    $('#product-list-order-' + orderNo + '-parcel-' + trackingNumber).append(
-    //$('.product-list-' + i).append(
-      `
+	for (const article of articles) {
+		$('#product-list-order-' + orderNo + '-parcel-' + trackingNumber).append(
+			//$('.product-list-' + i).append(
+			`
         <div class="row mb-2">
           <div class="col" style="font-size: 10px !important;">
               ${article.quantity}x ${article.articleName}
@@ -313,9 +354,9 @@ export function addProductDetails(articles, orderNo, trackingNumber) {
               ${article.sku}
           </div>
         </div>
-      `
-    )
-  }
+      `,
+		)
+	}
 }
 
 export function addCheckpointDetails(
@@ -329,7 +370,7 @@ export function addCheckpointDetails(
 	lineCode,
 	svgClass,
 	emailClass,
-  infoHtml
+	infoHtml,
 ) {
 	$('#sd-order-' + orderNo + '-parcel-' + trackingNumber).append(
 		//$('.shipment-details-' + i).append(
@@ -363,7 +404,7 @@ export function addCheckpointDetails(
         </div>
       </li>
     `,
-	);
+	)
 
 	//  $(`#tt-${i}-${cp}`).tooltip()
 }
@@ -379,33 +420,33 @@ export function addCheckpointSpacer(orderNo, trackingNumber) {
         <div class="col-7" style="font-size: 10px !important;"></div>
       </div>
     `,
-	);
+	)
 }
 
 export function displayAlert(status) {
-  let message
-  let alertType
+	let message
+	let alertType
 
-  switch (status) {
+	switch (status) {
 		case 400:
-			message = 'Please enter an order number and try again';
-			alertType = 'warning';
-			break;
+			message = 'Please enter an order number and try again'
+			alertType = 'warning'
+			break
 		case 401:
-			message = 'Please check your authorization credentials and try again';
-			alertType = 'danger';
-			break;
+			message = 'Please check your authorization credentials and try again'
+			alertType = 'danger'
+			break
 		case 403:
-			message = 'Please check your authorization credentials and try again';
-			alertType = 'danger';
-			break;
+			message = 'Please check your authorization credentials and try again'
+			alertType = 'danger'
+			break
 		case 404:
-			message = 'No records found';
-			alertType = 'info';
-			break;
+			message = 'No records found'
+			alertType = 'info'
+			break
 	}
-  stopProgress()
-  $('#search-area').after(
-    `<div id="fail-alert" class="alert alert-${alertType}" role="alert">${message}</div>`
-  )
+	stopProgress()
+	$('#search-area').after(
+		`<div id="fail-alert" class="alert alert-${alertType}" role="alert">${message}</div>`,
+	)
 }
