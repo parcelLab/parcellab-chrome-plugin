@@ -45,10 +45,6 @@
 }
 
 
-.item-box p{
-    //color: #747ba9;
-    
-}
 
 
 .main-item{
@@ -63,12 +59,7 @@
     margin-bottom: 0;
 }
 
-.main-item a{
-    //color: var(--black-100);
-}
-.main-item p {
-    //color: #9ca3af;
-}
+
 .main-box li{
     list-style: none;
 }
@@ -146,4 +137,14 @@ li.item-1 {
 
 .date {
     white-space: nowrap;
+}
+
+.custom-popover {
+  --bs-popover-max-width: 200px;
+  --bs-popover-border-color: var(--bs-primary);
+  --bs-popover-header-bg: var(--bs-primary);
+  --bs-popover-header-color: var(--bs-white);
+  --bs-popover-body-padding-x: 1rem;
+  --bs-popover-body-padding-y: .5rem;
+  font-size: 11px;
 }
