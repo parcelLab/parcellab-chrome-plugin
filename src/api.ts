@@ -4,9 +4,11 @@ import {
 	processBotOrders,
 } from './popup'
 import { subtractDays } from './utility'
-import { stopProgress, displayAlert } from './ux'
+import { stopProgress, displayAlert, displayToast } from './ux'
+import { getOptions, StorageOptions } from './storage'
 
 const baseURL = 'https://api.parcellab.com'
+const options: StorageOptions = getOptions()
 
 export function getOrdersFromChatBotAPI(searchTerm, searchType, options) {
 	// this method should replace getOrderByOrderNumber when a order number is passed in
@@ -120,4 +122,41 @@ export function getNotifications(parcel, options, orderNo, pCounter) {
 	$.ajax(settings).always(function (response) {
 		processJourneyCheckpoints(response, parcel, orderNo, pCounter)
 	})
+}
+
+export function resendNotification(notification) {
+	const notificationId = notification.getAttribute('id')
+	const channel = notification.getAttribute('data-pl-channel')
+
+	const settings = {
+		url: `${baseURL}/v2/re-trigger-message/`,
+		method: 'POST',
+		timeout: 0,
+		headers: {
+			'content-type': 'application/json',
+			user: options.user,
+			token: options.token,
+		},
+		data: JSON.stringify({
+			channel: channel,
+			id: notificationId,
+		}),
+	}
+
+	const message = `Sending Notification`
+	const color = '#0d6dfd'
+	displayToast(`ns-${notificationId}`, color, message)
+
+
+	$.ajax(settings)
+		.done(function () {
+			const message = `Notification was resent`
+			const color = '#198754'
+			displayToast(`nd-${notificationId}`, color, message)
+		})
+		.fail(function (response) {
+			const message = `An error has occured: ${response.status}`
+			const color = '#dc3546'
+			displayToast(`nf-${notificationId}`, color, message)
+		})
 }

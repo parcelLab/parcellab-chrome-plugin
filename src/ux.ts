@@ -1,16 +1,16 @@
 //require('@popperjs/core')
 
-import { Collapse, Popover } from 'bootstrap'
+import { Collapse, Popover, Toast } from 'bootstrap'
 
 import { clearLastResult, setLastResult } from './storage'
-
+import { resendNotification } from './api'
 
 const myDefaultAllowList = Popover.Default.allowList
 myDefaultAllowList.table = ['class', 'style']
 myDefaultAllowList.tbody = []
 myDefaultAllowList.tr = []
 myDefaultAllowList.td = ['style']
-
+myDefaultAllowList.i = ['data-pl-channel']
 
 export function readyPanel(options, lastResult) {
 	$('#search-input').on('keypress', function (e) {
@@ -170,7 +170,6 @@ export function enableControls() {
 			  enablePopovers(tn)
       } catch { console.log } 
 	})
-
 }
 
 function enablePopovers(trackingNumber) { 
@@ -183,6 +182,11 @@ function enablePopovers(trackingNumber) {
       trackingToggle.addEventListener('click', function () {
 				aPopover.hide()
 			})
+      popoverTriggerEl.addEventListener('shown.bs.popover', () => {
+        $('.resend').on('click', function () {
+					resendNotification(this)
+				})
+      })
     },
 	)
 }
@@ -370,7 +374,8 @@ export function addCheckpointDetails(
 	lineCode,
 	svgClass,
 	emailClass,
-	infoHtml,
+	infoTop,
+  infoBottom
 ) {
 	$('#sd-order-' + orderNo + '-parcel-' + trackingNumber).append(
 		//$('.shipment-details-' + i).append(
@@ -386,7 +391,8 @@ export function addCheckpointDetails(
           <div class="flex-col text-max-w">
             <p class="mb-0 text-max-w text-decoration-none fw-semibold">${title}</p>
             <p class="mb-0 text-max-w fw-light small">${subtitle}</p>
-            ${infoHtml}
+            ${infoTop}
+            ${infoBottom}
           </div>
           <div class="date">
             <p class="mb-0">${date.toLocaleString('en-US', {
@@ -449,4 +455,27 @@ export function displayAlert(status) {
 	$('#search-area').after(
 		`<div id="fail-alert" class="alert alert-${alertType}" role="alert">${message}</div>`,
 	)
+}
+
+export function displayToast(notificationId, color, message) {
+	const toastCode = `
+    <div id="resendToast-${notificationId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <svg class="bd-placeholder-img rounded me-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false">
+              <rect width="100%" height="100%" fill="${color}"></rect>
+          </svg>
+          <strong class="me-auto">${notificationId}</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          ${message}
+        </div>
+      </div>
+  `
+
+	$('#toast-container').prepend(toastCode)
+	const resendToast = document.getElementById(`resendToast-${notificationId}`)
+	const toastBootstrap = Toast.getOrCreateInstance(resendToast)
+
+	toastBootstrap.show()
 }
