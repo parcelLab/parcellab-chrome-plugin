@@ -164,7 +164,8 @@ export function processJourneyCheckpoints(response, parcel, orderNo, pCounter) {
 					day: 'numeric',
 				})
 			} else {
-				oDate = '--'
+				//oDate = '--'
+				oDate = '<i class="bi bi-x"></i>'
 			}
 
 			if (typeof checkpoint.clicked === 'string') {
@@ -173,7 +174,8 @@ export function processJourneyCheckpoints(response, parcel, orderNo, pCounter) {
 					day: 'numeric',
 				})
 			} else {
-				cDate = '--'
+				//cDate = '--'
+				cDate = '<i class="bi bi-x"></i>'
 			}
 
 			switch (cpStatus) {
@@ -222,8 +224,17 @@ export function processJourneyCheckpoints(response, parcel, orderNo, pCounter) {
 							</tbody>
 						</table>
 					`
-					icon = `<img src="/img/envelope.svg" alt="envelope" srcset="/img/envelope.svg" class="svg-link po-${parcel.tracking_number}" data-bs-toggle="popover" data-bs-custom-class="custom-popover" data-bs-html="true" data-bs-content='${emailPopover}'/>`
-					
+
+					if (checkpoint.clicked !== null) {
+						icon = `<img src="/img/click.svg" alt="envelope" srcset="/img/click.svg" class="svg-link po-${parcel.tracking_number}" data-bs-toggle="popover" data-bs-custom-class="custom-popover" data-bs-html="true" data-bs-content='${emailPopover}'/>`
+					} else if (checkpoint.opened !== null) {
+						icon = `<img src="/img/open.svg" alt="envelope" srcset="/img/open.svg" class="svg-link po-${parcel.tracking_number}" data-bs-toggle="popover" data-bs-custom-class="custom-popover" data-bs-html="true" data-bs-content='${emailPopover}'/>`
+					} else if (checkpoint.bounced === null) {
+						icon = `<img src="/img/envelope.svg" alt="envelope" srcset="/img/envelope.svg" class="svg-link po-${parcel.tracking_number}" data-bs-toggle="popover" data-bs-custom-class="custom-popover" data-bs-html="true" data-bs-content='${emailPopover}'/>`
+					} else {
+						icon = `<img src="/img/bounce.svg" alt="envelope" srcset="/img/bounce.svg" class="svg-link po-${parcel.tracking_number}" data-bs-toggle="popover" data-bs-custom-class="custom-popover" data-bs-html="true" data-bs-content='${emailPopover}'/>`
+					} 
+
 					if (checkpoint.messageType.startsWith('Resend-')) {
 						emailClass = ' border p-1 border-primary-subtle bg-body-tertiary'
 						infoTop = `
