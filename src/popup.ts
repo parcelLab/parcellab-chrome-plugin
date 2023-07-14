@@ -189,22 +189,26 @@ export function processJourneyCheckpoints(response, parcel, orderNo, pCounter) {
 					cpSubTitle = checkpoint.message
 					break
 				case 'email':
+					
 					attachmentsCode = ''
 					attachmentsLinks = ''
+
 					if (checkpoint.attachments.length != 0) {
 						for (const attach of checkpoint.attachments) {
 							attachmentsLinks = attachmentsLinks =
 								attachmentsLinks +
 								`<a href="${attach.url}">${attach.filename}</a><br />`
 						}
-						
-						attachmentsCode = `
-							<tr>
-								<td>Attachments:</td>
-      							<td>${attachmentsLinks}</td>
-							</tr>
-						`
+					} else {
+						attachmentsLinks = '<i class="bi bi-x"></i>'
 					}
+					attachmentsCode = `
+						<tr>
+							<td>Attachments:</td>
+      						<td>${attachmentsLinks}</td>
+						</tr>
+					`
+					
 
 					emailPopover = `
 						<table class="table table-borderless" style="margin-top: 0.5rem; margin-bottom: 0.5rem">
