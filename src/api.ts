@@ -4,7 +4,7 @@ import {
 	processBotOrders,
 } from './popup'
 import { subtractDays } from './utility'
-import { stopProgress, displayAlert, displayToast } from './ux'
+import { stopProgress, displayAlert, displayToast, enableReturnLink } from './ux'
 import { getOptions, StorageOptions } from './storage'
 
 const baseURL = 'https://api.parcellab.com'
@@ -158,5 +158,22 @@ export function resendNotification(notification) {
 			const message = `An error has occured: ${response.status}`
 			const color = '#dc3546'
 			displayToast(`nf-${notificationId}`, color, message)
+		})
+}
+
+export function isReturnsEnabled(user, order) {
+	//console.log(order)
+	const settings = {
+		url: 'https://returns-api.parcellab.com/prod/userConfig?lang=en&country=us',
+		method: 'GET',
+		timeout: 0,
+		headers: {
+			user: user,
+		},
+	}
+
+	$.ajax(settings)
+		.done(function () {
+			enableReturnLink(order.orderNo, order.parcels[0].delivery_info.email)
 		})
 }

@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles/popup.css">
 
+
     <title>parcelLab Order Tracking</title>
   </head>
   <body>
@@ -18,7 +19,18 @@
           <input type="text" id="search-input" class="form-control" placeholder="Order #, tracking #, email" aria-label="Order Number" aria-describedby="button-addon2">
           <button class="btn btn-outline-primary" type="submit" id="search-btn"><i class="bi-search" style="font-size: 1rem; color: cornflowerblue;"></i></button>
         </div>
-      <div id="resultsPanel" class="carousel-inner"></div>
+      <div id="resultsPanel" class="carousel-inner">
+      </div>
+    </div>
+    
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel" style="width:100%;">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasLabel">Register Return</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <div id="pl-returns-plugin" data-user="" data-lang-code="en" data-country-code="us"></div>
+      </div>
     </div>
     
     <script type="module" src="popup.js"></script>

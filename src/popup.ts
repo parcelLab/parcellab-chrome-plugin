@@ -17,7 +17,8 @@ import {
 import {
 	getOrderByOrderNumber,
 	getNotifications,
-	getOrdersFromChatBotAPI
+	getOrdersFromChatBotAPI,
+	isReturnsEnabled
 } from './api'
 
 require('bootstrap-icons/font/bootstrap-icons.css')
@@ -59,6 +60,9 @@ export function processBotOrder(response, multiOrder: boolean) {
 
 	//initial order information
 	UX.addOrderHeader(response.orders, multiOrder)
+	isReturnsEnabled(options.user, response.orders[0])
+			
+	// isReturnsEnabled(options.user)
 
 	let i = 0
 	let oIndex = 0
@@ -273,6 +277,9 @@ export function processJourneyCheckpoints(response, parcel, orderNo, pCounter) {
 	}
 }
 
+
+
+
 $(document).ready(function () {
 	const lastResult = getLastResult
 	UX.readyPanel(options, lastResult)
@@ -291,4 +298,26 @@ $(document).ready(function () {
 			getOrderByOrderNumber(searchTerm, options)
 		}
 	})
+	
+	$('#pl-returns-plugin').attr('data-user', options.user)
+
+	const newScript = document.createElement('script')
+	
+	if (options.staging) {
+		console.log('staging portal')
+		newScript.src = 'returns-plugin-staging.js'
+	} else {
+		console.log('production portal')
+		newScript.src = 'returns-plugin-production.js'
+	}
+	
+	const returnsTarget = document.getElementById('offcanvas')
+	returnsTarget.appendChild(newScript)
+
+	const styles = document.createElement('link')
+	styles.id = 'pl-returns-portal-styles'
+	styles.rel = 'stylesheet'
+	styles.href = 'returns-plugin.css'
+	document.getElementsByTagName('head')[0].appendChild(styles)
+
 })

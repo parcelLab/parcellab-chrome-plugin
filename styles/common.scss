@@ -5,6 +5,10 @@
     font-size: 11px;
 }
 
+.register-return-link {
+    font-size: 12px;
+}
+
 .order-card {
     font-size: 10px;
 }
@@ -151,4 +155,48 @@ li.item-1 {
   --bs-popover-body-padding-x: 1rem;
   --bs-popover-body-padding-y: .5rem;
   font-size: 11px;
+}
+
+.pl-header-text {
+    display: none;
+}
+
+#pwrd-by-pl {
+    display: none;
+}
+
+.pl-header {
+    font-size: 18px;
+}
+
+.pl-input-label {
+    font-size: 1rem;
+}
+
+.pl-input {
+    font-size: 11px !important;
+}
+
+.pl-card {
+    font-size: 11px !important;
+}
+
+.pl-desc-term {
+    flex: 0.5 !important;
+}
+
+.pl-order-information {
+    display: none;
+}
+
+.pl-card-section--center {
+    display: none;
+}
+
+.pl-courier-name {
+    font-size: 14px !important;
+}
+
+.pl-text-center.pl-header {
+    display: none;
 }
