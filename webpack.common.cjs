@@ -65,7 +65,12 @@ module.exports = {
 	},
 	plugins: [
 		new CopyPlugin({
-			patterns: [{ from: 'static' }],
+			patterns: [
+				{ from: 'static' },
+				{ from: 'src/returns-plugin-production.js', to: 'returns-plugin-production.js' },
+				{ from: 'src/returns-plugin-staging.js', to: 'returns-plugin-staging.js' },
+				{ from: 'src/sherlock_script.js', to: 'sherlock_script.js' },
+			],
 		}),
 		new webpack.ProvidePlugin({
 			$: 'jquery',
@@ -81,4 +86,4 @@ module.exports = {
 			overrideConfigFile: path.resolve(__dirname, '.eslintrc'),
 		}),
 	],
-};
+}

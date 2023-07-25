@@ -111,9 +111,12 @@ export function addOrderHeader(orders, multiOrder: boolean) {
                 </div>
             </div>
             <div class="row">
-                <div class="col order-header" >
-                    PACKAGES (${parcelsCount})
-                </div>
+              <div class="col order-header" >
+                  PACKAGES (${parcelsCount})
+              </div>
+            </div>
+            <div class="row pt-1 text-danger">
+              <div class="col register-return-link" id="register-return-order-${orderNo}"></div>
             </div>
         </div>
         <hr class="bg-secondary border-2 border-top border-secondary divider">
@@ -244,12 +247,15 @@ export function addMultiOrderTracking(parcel, orderNo) {
     `,
 	)
 
-	$('#order-info').after(
-		`
+
+  if ( !$('#orderPanel-' + orderNo).length ) {
+    $('#order-info').after(
+			`
      <div class="carousel-item" id="orderPanel-${orderNo}">
      </div>
     `,
-	)
+		)
+  }
 }
 
 export function addTrackingCard(
@@ -479,4 +485,56 @@ export function displayToast(notificationId, color, message) {
 	const toastBootstrap = Toast.getOrCreateInstance(resendToast)
 
 	toastBootstrap.show()
+}
+
+export function enableReturnLink(orderNo, email) {
+  // const icon = `<img src="/img/retain-icon.svg" alt="checkmark in circle" srcset="/img/retain-icon.svg" />`
+   
+  // $('#register-return-order-' + orderNo).html(
+	// 	`<a role="button" onclick="passReturnsParams(${orderNo})" data-pl-order="${orderNo}" data-bs-toggle="offcanvas" data-bs-target="#offcanvas">Register Return <span class="">${icon}</span></a>`,
+	// )
+  $('#register-return-order-' + orderNo).html(
+		`<a role="button" onclick="passReturnsParams(${orderNo})" data-pl-order="${orderNo}" data-bs-toggle="offcanvas" data-bs-target="#offcanvas">Register Return<i class="bi bi-cart-x-fill"></i></a>`,
+	)
+4
+
+  $('#register-return-order-' + orderNo).on('click', function () {
+      //console.log('clicked')
+      // const orderInput = <HTMLInputElement>(document.getElementById('txt-signin-ref'))
+      // orderInput.value = orderNo
+      // orderInput.dispatchEvent(
+			// 	new Event('change', { bubbles: true }),
+			// )
+
+      // const emailInput = <HTMLInputElement>(document.getElementById('txt-signin-login'))
+      // emailInput.value = email
+      // emailInput.dispatchEvent(
+			// 	new Event('change', { bubbles: true }),
+			// )
+
+      // const returnButton = <HTMLButtonElement>(document.querySelectorAll('[data-testid="signin-submit-btn"]')[0])
+      // returnButton.click()
+
+      const refField = document.getElementById('txt-signin-ref')
+			const loginField = document.getElementById('txt-signin-login')
+
+			const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+				window.HTMLInputElement.prototype,
+				'value',
+			).set
+			nativeInputValueSetter.call(refField, orderNo)
+
+			const ev2 = new Event('input', { bubbles: true })
+			refField.dispatchEvent(ev2)
+
+			nativeInputValueSetter.call(loginField, email)
+			loginField.dispatchEvent(ev2)
+
+      const returnButton = <HTMLButtonElement>(
+				document.querySelectorAll('[data-testid="signin-submit-btn"]')[0]
+			)
+      returnButton.click()
+
+	}) 
+ 
 }

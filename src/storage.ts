@@ -2,6 +2,7 @@ export interface StorageOptions {
 	user: string
 	token: string
 	language: string
+	staging: boolean
 }
 
 export function getOptions(): StorageOptions {
@@ -9,6 +10,7 @@ export function getOptions(): StorageOptions {
 		user: localStorage.getItem('user'),
 		token: localStorage.getItem('token'),
 		language: localStorage.getItem('language'),
+		staging: JSON.parse(localStorage.getItem('staging'))
 	}
 }
 
