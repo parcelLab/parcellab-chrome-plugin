@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "parcelLab",
-  "version": "0.7.1",
-  "version_name": "0.7.1 beta",
+  "version": "0.8.0",
+  "version_name": "0.8.0 beta",
   "description": "parcelLab Chrome plugin for Customer Service teams to retrieve and display trackings from parcelLab",
   "author": "jay@parcellab.com",
   "icons": {
