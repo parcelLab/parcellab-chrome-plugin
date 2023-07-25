@@ -141,6 +141,7 @@ export function enableControls() {
 
 	$('.closePanel').on('click', function () {
 		$('#resultsPanel').html('')
+    $('.popover.custom-popover.bs-popover-auto.fade.show').remove()
 		clearLastResult()
 	})
 
