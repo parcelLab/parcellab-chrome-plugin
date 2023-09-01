@@ -107,10 +107,10 @@ export function processBotOrder(response, multiOrder: boolean) {
 		getNotifications(parcel, options, orderNo, i)
 
 		//add product details header
-		UX.addProductDetailsHeader(trackingNumber, orderNo)
+		UX.addProductDetailsHeader(trackingNumber, orderNo, parcel.isReturn)
 
 		//start product loop
-		UX.addProductDetails(parcel.delivery_info.articles, orderNo, trackingNumber)
+		UX.addProductDetails(parcel.delivery_info.articles, orderNo, trackingNumber, parcel.isReturn)
 	} //end tracking loop
 
 	UX.enableControls()

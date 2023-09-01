@@ -332,7 +332,7 @@ export function addSubCards(parcel, orderNo, i) {
 	)
 }
 
-export function addProductDetailsHeader(trackingNumber, orderNo) {
+export function addProductDetailsHeader(trackingNumber, orderNo, isReturn) {
 	$('#pd-order-' + orderNo + '-parcel-' + trackingNumber).append(
 		//$('.product-details-' + i).append(
 		`
@@ -340,10 +340,10 @@ export function addProductDetailsHeader(trackingNumber, orderNo) {
           <div class="container" id="product-list-order-${orderNo}-parcel-${trackingNumber}">
               <div class="row">
                   <div class="col" style="font-size: 10px !important;">
-                      <strong>Ordered Items</strong>
+                      <strong>${isReturn ? 'Returned Items' : 'Ordered Items'}</strong>
                   </div>
                   <div class="col" style="font-size: 10px !important;">
-                      <strong>Item Number</strong>
+                      <strong>${isReturn ? 'Reason' : 'Item Number'}</strong>
                   </div>
               </div>
           </div>
@@ -352,7 +352,7 @@ export function addProductDetailsHeader(trackingNumber, orderNo) {
 	)
 }
 
-export function addProductDetails(articles, orderNo, trackingNumber) {
+export function addProductDetails(articles, orderNo, trackingNumber, isReturn) {
 	for (const article of articles) {
 		$('#product-list-order-' + orderNo + '-parcel-' + trackingNumber).append(
 			//$('.product-list-' + i).append(
@@ -362,7 +362,7 @@ export function addProductDetails(articles, orderNo, trackingNumber) {
               ${article.quantity}x ${article.articleName}
           </div>
           <div class="col" style="font-size: 10px !important;">
-              ${article.sku}
+              ${isReturn ? article.prettyReturnReason : article.sku}
           </div>
         </div>
       `,
