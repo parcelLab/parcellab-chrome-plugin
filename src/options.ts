@@ -6,7 +6,7 @@ import '../styles/common.scss'
 
 import { getOptions, setOptions, StorageOptions } from './storage'
 
-const { user, token, language } = getOptions()
+const { user, token, language, staging } = getOptions()
 
 if (user !== undefined) {
 	$('#user').val(user)
@@ -29,8 +29,8 @@ $(document).ready(function () {
 
 	$('#save-btn').on('click', function () {
 		let valid = true
-		const options: StorageOptions = { user, token, language }
-		type ObjectKey = keyof typeof options
+		const options: StorageOptions = { user, token, language, staging }
+		//type ObjectKey = keyof typeof options
 
 		$('.fc').each(function () {
 			const val: string = $(this).val() as string
@@ -39,8 +39,10 @@ $(document).ready(function () {
 				$(this).addClass('is-invalid')
 				valid = false
 			} else {
-				const myKey = $(this).attr('id') as ObjectKey
-				options[myKey] = val
+				//const myKey = $(this).attr('id') as ObjectKey
+				//options[myKey] = val
+				options[$(this).attr('id')] = val
+
 			}
 		})
 

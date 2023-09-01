@@ -21,19 +21,34 @@
                 <form id="options-form">
                     <h4>Authentication</h4>
                     <br />
-                    <div class="mb-3">
-                        <label for="user" class="form-label">User ID</label>
-                        <input type="text" class="form-control fc" id="user" placeholder="User ID" required>
-                        <div class="invalid-feedback">
-                            Please enter your parcelLab id.
+                    <div id="" class="container bg-light border border-light-subtle rounded-3">
+                        <div class="float-end mt-2 fs-5">
+                            <a href="#" role="button" aria-expanded="false" aria-controls=""><i class="bi bi-trash"></i></a>
+                        </div>
+                        <div class="mb-3 mt-2">
+                            <label for="account" class="form-label">Account</label>
+                            <input type="text" class="form-control fc" id="account" placeholder="Account Name" required>
+                            <div class="invalid-feedback">
+                                Please enter Account Name.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="user" class="form-label">Account ID</label>
+                            <input type="text" class="form-control fc" id="user" placeholder="User ID" required>
+                            <div class="invalid-feedback">
+                                Please enter your Account ID.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="token" class="form-label">API token</label>
+                            <input type="password" class="form-control fc" id="token" placeholder="API Token" required>
+                            <div class="invalid-feedback">
+                                Please enter your API token.
+                            </div>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="token" class="form-label">API token</label>
-                        <input type="password" class="form-control fc" id="token" placeholder="API Token" required>
-                        <div class="invalid-feedback">
-                            Please enter your API token.
-                        </div>
+                    <div class="text-end mt-2 fs-2">
+                        <a href="#" role="button" aria-expanded="false" aria-controls=""><i class="bi bi-plus-circle-fill"></i></a>
                     </div>
 
                     <br /> <br />
