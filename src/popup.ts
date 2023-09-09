@@ -2,10 +2,14 @@
 import '../styles/common.scss'
 
 import {
-	getOptions,
-	StorageOptions,
+	//getOptions,
+	getOptionsMA,
+	//StorageOptions,
+	StorageOptionsMA,
 	getLastResult,
 	setLastResult,
+	getCurrentAccount,
+	setCurrentAccount,
 } from './storage'
 import * as UX from './ux'
 import {
@@ -20,10 +24,29 @@ import {
 	getOrdersFromChatBotAPI,
 	isReturnsEnabled
 } from './api'
+import { Offcanvas } from 'bootstrap'
 
 require('bootstrap-icons/font/bootstrap-icons.css')
 
-const options: StorageOptions = getOptions()
+//const options: StorageOptions = getOptions()
+const options: StorageOptionsMA = getOptionsMA()
+const account = {
+	user: null,
+	token: null
+}
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+
+	if (msg == 'accountsUpdated') {
+		window.close()
+	} else if (msg == 'settingsDestroyed') {
+		window.close()
+	} else {
+		console.log(msg)
+		console.log(sender)
+		console.log(sendResponse)
+	}
+})
 
 export function processBotOrders(response) {
 	//this should replace processBotOrder [singular] as it will handle single and multi orders(??)
@@ -60,7 +83,10 @@ export function processBotOrder(response, multiOrder: boolean) {
 
 	//initial order information
 	UX.addOrderHeader(response.orders, multiOrder)
-	isReturnsEnabled(options.user, response.orders[0])
+
+	//FIX THIS -- commenting for now
+	//isReturnsEnabled(options.user, response.orders[0])
+	isReturnsEnabled(account, response.orders[0])
 			
 	// isReturnsEnabled(options.user)
 
@@ -104,7 +130,7 @@ export function processBotOrder(response, multiOrder: boolean) {
 		UX.addSubCards(parcel, orderNo, i)
 
 		// get notifications
-		getNotifications(parcel, options, orderNo, i)
+		getNotifications(parcel, options.language, account, orderNo, i)
 
 		//add product details header
 		UX.addProductDetailsHeader(trackingNumber, orderNo, parcel.isReturn)
@@ -296,10 +322,20 @@ export function processJourneyCheckpoints(response, parcel, orderNo, pCounter) {
 
 
 $(document).ready(function () {
-	const lastResult = getLastResult
-	UX.readyPanel(options, lastResult)
+	const lastResult = getLastResult()
+	const currentAccount = getCurrentAccount()
+
+	UX.readyPanel(options, lastResult, currentAccount)
+
+	$('#account-selector').on( "change", function() {
+		const newCurrentAccount = $(this).children('option:selected').val()
+		setCurrentAccount(newCurrentAccount)
+	})
 
 	$('#search-btn').on('click', function () {
+		account.user = $('select option:selected').attr('data-pl-account-user')
+		account.token = $('select option:selected').attr('data-pl-account-token')	
+
 		UX.cleanPanel()
 		UX.startProgress()
 		const searchTerm = ($('#search-input').val() as string).trim()
@@ -308,16 +344,28 @@ $(document).ready(function () {
 			UX.displayAlert(400)
 			$('#search-btn').prop('disabled', false)
 		} else if (isEmail(searchTerm)) {
-			getOrdersFromChatBotAPI(searchTerm, 'customerEmail', options)
+			getOrdersFromChatBotAPI(searchTerm, 'customerEmail', options.language, account)
 		} else {
-			getOrderByOrderNumber(searchTerm, options)
+			getOrderByOrderNumber(searchTerm, options.language, account)
 		}
 	})
+
+	//FIX THIS -- commenting for now
+	//$('#pl-returns-plugin').attr('data-user', options.user)
 	
-	$('#pl-returns-plugin').attr('data-user', options.user)
+	account.user = $('select option:selected').attr('data-pl-account-user')
+	//console.log('setting up returns plugin: ' + account.user)
+	$('#pl-returns-plugin').attr('data-user', account.user)
+
+	//temporary code for customer service portals for Helen of Troy accounts
+	const hotAccounts: string[] = ['1617221','1617624','1617632','1617638','1618780','1617664','1617656']
+	if (hotAccounts.includes(account.user)) {
+		$('#pl-returns-plugin').attr('data-country-code', 'xc')
+	}
+
 
 	const newScript = document.createElement('script')
-	
+
 	if (options.staging) {
 		console.log('staging portal')
 		newScript.src = 'returns-plugin-staging.js'
@@ -325,7 +373,7 @@ $(document).ready(function () {
 		console.log('production portal')
 		newScript.src = 'returns-plugin-production.js'
 	}
-	
+
 	const returnsTarget = document.getElementById('offcanvas')
 	returnsTarget.appendChild(newScript)
 
@@ -335,4 +383,8 @@ $(document).ready(function () {
 	styles.href = 'returns-plugin.css'
 	document.getElementsByTagName('head')[0].appendChild(styles)
 
+	$('#reset-returns-buttton').on('click', function () {
+		const returnsCanvas = Offcanvas.getOrCreateInstance('#offcanvas')
+		returnsCanvas.hide()		
+	})
 })

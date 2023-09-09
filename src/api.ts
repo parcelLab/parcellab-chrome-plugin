@@ -5,22 +5,22 @@ import {
 } from './popup'
 import { subtractDays } from './utility'
 import { stopProgress, displayAlert, displayToast, enableReturnLink } from './ux'
-import { getOptions, StorageOptions } from './storage'
+//import { getOptions, StorageOptions } from './storage'
 
 const baseURL = 'https://api.parcellab.com'
-const options: StorageOptions = getOptions()
+//const options: StorageOptions = getOptions()
 
-export function getOrdersFromChatBotAPI(searchTerm, searchType, options) {
+export function getOrdersFromChatBotAPI(searchTerm, searchType, language, account) {
 	// this method should replace getOrderByOrderNumber when a order number is passed in
 
 	const settings = {
-		url: `${baseURL}/orders/bot?showReturns=true&${searchType}=${searchTerm}&lang=${options.language}`,
+		url: `${baseURL}/orders/bot?showReturns=true&${searchType}=${searchTerm}&lang=${language}`,
 		method: 'GET',
 		timeout: 0,
 		async: true,
 		headers: {
 			'content-type': 'application/json',
-			Authorization: 'Basic ' + btoa(options.user + ':' + options.token),
+			Authorization: 'Basic ' + btoa(account.user + ':' + account.token),
 		},
 	}
 
@@ -46,15 +46,15 @@ export function getOrdersFromChatBotAPI(searchTerm, searchType, options) {
 		})
 }
 
-export function getOrderByOrderNumber(searchTerm, options) {
+export function getOrderByOrderNumber(searchTerm, language, account) {
 	const settings = {
-		url: `${baseURL}/orders/bot?showReturns=true&orderNo=${searchTerm}&lang=${options.language}`,
+		url: `${baseURL}/orders/bot?showReturns=true&orderNo=${searchTerm}&lang=${language}`,
 		method: 'GET',
 		timeout: 0,
 		async: true,
 		headers: {
 			'content-type': 'application/json',
-			Authorization: 'Basic ' + btoa(options.user + ':' + options.token),
+			Authorization: 'Basic ' + btoa(account.user + ':' + account.token),
 		},
 	}
 
@@ -74,24 +74,24 @@ export function getOrderByOrderNumber(searchTerm, options) {
 				displayAlert(403)
 				$('#search-btn').prop('disabled', false)
 			} else {
-				getOrderNumberByTrackingNumber(searchTerm, options)
+				getOrderNumberByTrackingNumber(searchTerm, language, account)
 			}
 		})
 }
 
-function getOrderNumberByTrackingNumber(searchTerm, options) {
+function getOrderNumberByTrackingNumber(searchTerm, language, account) {
 	const date = new Date()
 	const fromDate = subtractDays(date, 120)
 	const fromDateFormatted = fromDate.toJSON().slice(0, 10)
 
 	const settings = {
-		url: `${baseURL}/v2/search/?s=${searchTerm}&from=${fromDateFormatted}&lang=${options.language}`,
+		url: `${baseURL}/v2/search/?s=${searchTerm}&from=${fromDateFormatted}&lang=${language}`,
 		method: 'GET',
 		timeout: 0,
 		async: true,
 		headers: {
 			'content-type': 'application/json',
-			Authorization: 'Basic ' + btoa(options.user + ':' + options.token),
+			Authorization: 'Basic ' + btoa(account.user + ':' + account.token),
 		},
 	}
 
@@ -102,20 +102,20 @@ function getOrderNumberByTrackingNumber(searchTerm, options) {
 			$('#search-btn').prop('disabled', false)
 		} else {
 			const orderNumber = response.results[0].inf.orn
-			getOrderByOrderNumber(orderNumber, options)
+			getOrderByOrderNumber(orderNumber, language, account)
 		}
 	})
 }
 
-export function getNotifications(parcel, options, orderNo, pCounter) {
+export function getNotifications(parcel, language, account, orderNo, pCounter) {
 	const settings = {
-		url: `${baseURL}/v2/notifications?tid=${parcel.id}&lang=${options.language}`,
+		url: `${baseURL}/v2/notifications?tid=${parcel.id}&lang=${language}`,
 		method: 'GET',
 		timeout: 0,
 		async: true,
 		headers: {
 			'content-type': 'application/json',
-			Authorization: 'Basic ' + btoa(options.user + ':' + options.token),
+			Authorization: 'Basic ' + btoa(account.user + ':' + account.token),
 		},
 	}
 
@@ -124,7 +124,7 @@ export function getNotifications(parcel, options, orderNo, pCounter) {
 	})
 }
 
-export function resendNotification(notification) {
+export function resendNotification(notification, account) {
 	const notificationId = notification.getAttribute('id')
 	const channel = notification.getAttribute('data-pl-channel')
 
@@ -134,8 +134,8 @@ export function resendNotification(notification) {
 		timeout: 0,
 		headers: {
 			'content-type': 'application/json',
-			user: options.user,
-			token: options.token,
+			user: account.user,
+			token: account.token,
 		},
 		data: JSON.stringify({
 			channel: channel,
@@ -161,14 +161,16 @@ export function resendNotification(notification) {
 		})
 }
 
-export function isReturnsEnabled(user, order) {
-	//console.log(order)
+export function isReturnsEnabled(account, order) {
+	console.log('in returns enabled function')
+	console.log(account)
+	console.log(order)
 	const settings = {
 		url: 'https://returns-api.parcellab.com/prod/userConfig?lang=en&country=us',
 		method: 'GET',
 		timeout: 0,
 		headers: {
-			user: user,
+			user: account.user,
 		},
 	}
 

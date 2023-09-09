@@ -12,23 +12,42 @@ myDefaultAllowList.tr = []
 myDefaultAllowList.td = ['style']
 myDefaultAllowList.i = ['data-pl-channel']
 
-export function readyPanel(options, lastResult) {
+export function readyPanel(options, lastResult, currentAccount) {
 	$('#search-input').on('keypress', function (e) {
 		if (e.which == 13) {
 			$('#search-btn').click()
 		}
 	})
 
-	if (
-		options.user == null ||
-		options.token == null ||
-		options.language == null
-	) {
+	if (!options.accounts || options.accounts.length < 1) {
 		$('#search-btn').prop('disabled', true)
 		$('#order-input').prop('disabled', true)
-
 		chrome.runtime.openOptionsPage()
+	} else {
+		for (const account of options.accounts) {
+			$('#account-selector').append(
+				`
+        <option value="${account.id}" data-pl-account-user="${account.user}" data-pl-account-token="${account.token}">${account.name}</option>
+        `,
+			)
+		}
+    $('#account-selector').val(currentAccount)
+		if (options.accounts.length < 2) {
+			$('#account-list-selector').hide()
+		}
 	}
+
+	//FIX THIS -- commenting for now!
+	// if (
+	// 	options.user == null ||
+	// 	options.token == null ||
+	// 	options.language == null
+	// ) {
+	// 	$('#search-btn').prop('disabled', true)
+	// 	$('#order-input').prop('disabled', true)
+
+	// 	chrome.runtime.openOptionsPage()
+	// }
 
 	if (lastResult !== null) {
 		$('#resultsPanel').html(lastResult)
@@ -187,8 +206,12 @@ function enablePopovers(trackingNumber) {
 				aPopover.hide()
 			})
       popoverTriggerEl.addEventListener('shown.bs.popover', () => {
+        const account = {
+            user: $('select option:selected').attr('data-pl-account-user'),
+            token: $('select option:selected').attr('data-pl-account-token')
+          }
         $('.resend').on('click', function () {
-					resendNotification(this)
+					resendNotification(this, account)
 				})
       })
     },
@@ -362,7 +385,7 @@ export function addProductDetails(articles, orderNo, trackingNumber, isReturn) {
               ${article.quantity}x ${article.articleName}
           </div>
           <div class="col" style="font-size: 10px !important;">
-              ${isReturn ? article.prettyReturnReason : article.sku}
+              ${isReturn ? article.prettyReturnReason : article.articleNo}
           </div>
         </div>
       `,
@@ -537,4 +560,39 @@ export function enableReturnLink(orderNo, email) {
 
 	}) 
  
+}
+
+export function addAccountPannel(index) {
+  $('#accounts').append(
+		`
+    <div id="account-${index}" class="container bg-light border border-light-subtle rounded-3 mt-3 account" data-account-id="${index}">
+      <div class="row g-2 mt-1">
+        <div class="mb-3 col-md-6">
+            <label for="name-${index}" class="form-label">Account Name</label>
+            <input type="text" class="form-control fc name" id="name-${index}" placeholder="Account Name" required>
+            <div class="invalid-feedback">
+                Please enter Account Name.
+            </div>
+        </div>
+        <div class="mb-3 col-md-6">
+          <div class="d-flex justify-content-between">
+            <label for="user-${index}" class="form-label">Account ID</label>
+            <a id="del-account-btn-${index}" data-account-id="${index}" href="#" role="button" aria-expanded="false" aria-controls="" class="del-account-btn"><i class="bi bi-trash"></i></a>
+          </div>
+            <input type="text" class="form-control fc user" id="user-${index}" placeholder="User ID" required>
+            <div class="invalid-feedback">
+                Please enter your Account ID.
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="token-${index}" class="form-label">API token</label>
+            <input type="password" class="form-control fc token" id="token-${index}" placeholder="API Token" required>
+            <div class="invalid-feedback">
+                Please enter your API token.
+            </div>
+        </div>
+      </div>
+    </div>
+    `,
+	)
 }

@@ -157,12 +157,10 @@ li.item-1 {
   font-size: 11px;
 }
 
-.pl-header-text {
-    display: none;
-}
 
-#pwrd-by-pl {
-    display: none;
+//css hacks for returns plugin
+.pl-courier-name {
+     font-size: 14px !important;
 }
 
 .pl-header {
@@ -185,18 +183,26 @@ li.item-1 {
     flex: 0.5 !important;
 }
 
-.pl-order-information {
+h1.pl-header {
     display: none;
 }
 
-.pl-card-section--center {
+.pl-header-text {
     display: none;
 }
 
-.pl-courier-name {
-    font-size: 14px !important;
-}
-
-.pl-text-center.pl-header {
+#pwrd-by-pl {
     display: none;
 }
+
+// .pl-order-information {
+//     display: none;
+// }
+
+// .pl-card-section--center {
+//     display: none;
+// }
+
+// .pl-text-center.pl-header {
+//     display: none;
+// }
