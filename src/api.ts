@@ -14,7 +14,7 @@ export function getOrdersFromChatBotAPI(searchTerm, searchType, options) {
 	// this method should replace getOrderByOrderNumber when a order number is passed in
 
 	const settings = {
-		url: `${baseURL}/orders/bot?showReturns=true&${searchType}=${searchTerm}&lang=${options.language}`,
+		url: `${baseURL}/orders/bot?showReturns=true&${searchType}=${encodeURIComponent(searchTerm)}&lang=${options.language}`,
 		method: 'GET',
 		timeout: 0,
 		async: true,
@@ -48,7 +48,7 @@ export function getOrdersFromChatBotAPI(searchTerm, searchType, options) {
 
 export function getOrderByOrderNumber(searchTerm, options) {
 	const settings = {
-		url: `${baseURL}/orders/bot?showReturns=true&orderNo=${searchTerm}&lang=${options.language}`,
+		url: `${baseURL}/orders/bot?showReturns=true&orderNo=${encodeURIComponent(searchTerm)}&lang=${options.language}`,
 		method: 'GET',
 		timeout: 0,
 		async: true,
